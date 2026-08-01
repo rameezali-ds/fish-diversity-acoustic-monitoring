@@ -1,0 +1,35 @@
+# Audio and cached arrays. Regenerate with notebooks 01 and 03.
+audio/
+*.wav
+*.WAV
+prepared/
+*.npy
+*.f32
+
+# Per-run results and fold assignments. Regenerate with notebooks 04, 05 and 07.
+runs/
+
+# Notebook and editor state
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+executed/
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+._*
+__MACOSX/
+Thumbs.db
+
+# Scheduler logs
+logs/
+slurm-*.out
+*.err
