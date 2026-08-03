@@ -41,7 +41,6 @@ Run in order.
 **Spectrograms.** Recordings are normalised by the 99th percentile of their raw amplitude,
 band-passed to 100–2000 Hz, resampled to 6 kHz and cut into 10-second clips. Each clip is
 transformed with a 1024-point Hann window and 256-sample hop, giving a 324 × 235 representation.
-A sweep over window lengths from 32 ms to 341 ms found results insensitive to this choice.
 
 **Features.** Acoustic measurements are made on the 100–2000 Hz band, the range in which fish sound
 is concentrated. One exception carries a `_fullband` suffix: zero-crossing rate counts sign changes
@@ -50,8 +49,7 @@ per sample, so band-limiting would make it a property of the filter rather than 
 **Targets.** Rarefied Shannon diversity and rarefied species richness, computed on the species counts
 with *Anchoa* excluded and standardised to a common sampling depth of 122 individuals. *Anchoa* is a
 schooling species that dominated individual catches, so a single sample could swamp any diversity
-measure computed from raw counts. Richness uses the Hurlbert (1971) closed form; Shannon is estimated
-by Monte Carlo over multivariate hypergeometric draws.
+measure computed from raw counts.
 
 **Evaluation.** Five-fold cross-validation split by recording, so no clip from a test recording
 appears in training. Fold assignments are shared across all models via `runs/folds_k5_seed*.json`,
@@ -75,13 +73,13 @@ Mean over five seeds, with the seed-to-seed standard deviation.
 
 **Neural networks, Shannon diversity** (mean-baseline MAE 0.3073)
 
-| model | parameters | R² | MAE |
-|---|---|---|---|
-| BiLSTM | 224,898 | 0.183 ± 0.065 | 0.271 |
-| BiGRU | 174,978 | 0.166 ± 0.047 | 0.276 |
-| DenseNet | 178,045 | 0.127 ± 0.093 | 0.282 |
-| CNN | 40,161 | 0.086 ± 0.037 | 0.287 |
-| ResNet | 191,601 | 0.080 ± 0.044 | 0.286 |
+| model | R² | MAE |
+|---|---|---|
+| BiLSTM | 0.183 ± 0.065 | 0.271 |
+| BiGRU | 0.166 ± 0.047 | 0.276 |
+| DenseNet | 0.127 ± 0.093 | 0.282 |
+| CNN | 0.086 ± 0.037 | 0.287 |
+| ResNet | 0.080 ± 0.044 | 0.286 |
 
 Sequence models outperform image models on both diversity targets. The BiLSTM and BiGRU are close
 enough that the BiGRU is carried forward on the grounds of simplicity: it uses fewer gates and a
@@ -108,14 +106,6 @@ The size of that improvement depends on how many features sit alongside it. With
 the random forest gains 0.019 R²; with 5 it gains 0.120. A random forest considers only a subset of
 features at each split, so a single informative column is offered far more often when the candidate
 pool is small. The same pattern appears in XGBoost.
-
-Both blocks are reported rather than one being selected. Choosing between them on the strength of
-these numbers would mean picking a feature set using the same cross-validation scores then quoted as
-the result, which inflates the estimate.
-
-Effect sizes are small throughout. With 72 recordings the seed-to-seed standard deviation is
-comparable to the improvement itself, particularly for XGBoost, whose spread is roughly twice the
-random forest's.
 
 ## Outputs
 
@@ -144,9 +134,6 @@ Figures are written under `figures/`.
 └── runs/                per-run results and fold assignments (not tracked)
 ```
 
-Paths default to `/scratch/$USER/capstone`. Change `BASE` at the top of each notebook to run
-elsewhere.
-
 ## Requirements
 
 Python 3.11 or later.
@@ -154,11 +141,3 @@ Python 3.11 or later.
 ```
 pip install -r requirements.txt
 ```
-
-A GPU is not required but reduces training time substantially. Notebook 03 holds the spectrogram
-array in memory, requiring approximately 2 GB of RAM.
-
-## Reference
-
-Hurlbert, S.H. (1971). The nonconcept of species diversity: a critique and alternative parameters.
-*Ecology* 52(4), 577–586.
